@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KENCANA – Pangkat</title>
+
+    <!-- Bootstrap 5 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet">
+
+    <style>
+    :root{
+      --bg-0:#07162e;
+      --bg-1:#0a2345;
+      --bg-2:#0f2f57;
+      --panel:#0b2447;
+      --panel-2:#0d2a52;
+      --neon:#4fd3ff;
+      --neon-dim:#1bb7e6;
+      --text:#d9ecff;
+      --muted:#9fb6cc;
+    }
+
+    body{
+      min-height:100vh;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 500px at 80% -10%, #1b3b75 0%, transparent 60%),
+        radial-gradient(900px 500px at -10% 10%, #0e2a57 0%, transparent 55%),
+        linear-gradient(180deg, var(--bg-1), var(--bg-0));
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+      letter-spacing:.2px;
+    }
+
+    /* layout */
+    .app{
+      min-height:100vh;
+      display:flex;
+    }
+    .sidebar{
+      width:260px;
+      background: linear-gradient(180deg, #0a1f42 0%, #081a35 65%, #07152a 100%);
+      border-right:1px solid rgba(79,211,255,.18);
+      box-shadow: inset -8px 0 30px rgba(0,0,0,.35);
+    }
+    .content{
+      flex:1;
+      padding:18px 18px 24px;
+    }
+
+    /* sidebar */
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      padding:18px 18px 14px;
+      border-bottom:1px solid rgba(255,255,255,.05);
+    }
+    .brand .logo{
+      width:46px;height:46px;border-radius:50%;
+      display:grid;place-items:center;
+      border:1px solid rgba(79,211,255,.6);
+      color:var(--neon);
+      box-shadow:0 0 18px rgba(79,211,255,.25);
+    }
+    .brand h1{
+      font-size:18px; margin:0; font-weight:700; letter-spacing:1px;
+      color:#a8e9ff;
+    }
+
+    .nav-section-title{
+      font-size:12px;
+      text-transform:capitalize;
+      color:var(--muted);
+      padding:14px 16px 6px;
+      opacity:.9;
+    }
+    .side-link{
+      color:var(--text);
+      text-decoration:none;
+      display:flex; align-items:center; gap:10px;
+      padding:10px 14px;
+      margin:4px 10px;
+      border-radius:6px;
+      background:rgba(255,255,255,0.02);
+      border:1px solid transparent;
+    }
+    .side-link:hover{
+      border-color:rgba(79,211,255,.35);
+      background:rgba(79,211,255,.06);
+      color:#e8f7ff;
+    }
+    .side-link.active{
+      background:rgba(79,211,255,.10);
+      border-color:rgba(79,211,255,.6);
+      box-shadow:0 0 0 1px rgba(79,211,255,.2) inset;
+      position:relative;
+    }
+    .side-link.active:before{
+      content:"";
+      position:absolute; left:-10px; top:6px; bottom:6px;
+      width:3px; background:var(--neon);
+      box-shadow:0 0 12px rgba(79,211,255,.9);
+      border-radius:3px;
+    }
+    .analysis-tabs .btn{
+      background:#132b52; color:var(--text);
+      border:1px solid rgba(255,255,255,.08);
+      font-size:12px; padding:6px 10px;
+    }
+    .analysis-tabs .btn.active{
+      border-color:rgba(79,211,255,.6);
+      box-shadow:0 0 0 1px rgba(79,211,255,.2) inset;
+      color:#eaf8ff;
+    }
+    .logout{
+      position:absolute; bottom:14px; left:14px; right:14px;
+      font-size:13px;
+    }
+    .sidebar-inner{
+      position:relative; height:100vh; overflow:auto; padding-bottom:84px;
+    }
+
+    /* top bar */
+    .topbar{
+      background:linear-gradient(180deg, #0c2a53, #0a2346);
+      border:1px solid rgba(79,211,255,.18);
+      border-radius:8px;
+      padding:10px 12px;
+      display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+      box-shadow:0 10px 30px rgba(0,0,0,.3);
+    }
+    .crumb{
+      display:flex; align-items:center; gap:8px;
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.06);
+      padding:6px 10px; border-radius:6px;
+      font-size:13px; color:#cfe6ff;
+    }
+    .crumb .tag{
+      padding:2px 8px; border-radius:999px;
+      border:1px solid rgba(79,211,255,.5);
+      color:#c9f3ff; font-weight:600;
+      background:rgba(79,211,255,.08);
+    }
+    .topbar .form-select, .topbar .form-control{
+      background:#102a52; color:var(--text);
+      border:1px solid rgba(255,255,255,.10);
+      font-size:13px;
+    }
+    .topbar .form-control::placeholder{ color:#b7c7d8; opacity:.7; }
+    .search-wrap{
+      position:relative; flex:1; min-width:220px;
+    }
+    .search-wrap .bi-search{
+      position:absolute; right:10px; top:50%; transform:translateY(-50%);
+      color:#9fb6cc;
+    }
+    .notif{
+      width:34px; height:34px; display:grid; place-items:center;
+      background:#102a52; border:1px solid rgba(255,255,255,.10);
+      border-radius:6px; color:#ffbfd1;
+    }
+
+    /* columns / cards */
+    .rank-grid{
+      margin-top:14px;
+      background:linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.35));
+      border:1px solid rgba(79,211,255,.16);
+      border-radius:8px;
+      padding:12px;
+    }
+    .rank-col{
+      background:linear-gradient(180deg, #0fa0d0 0%, #0e7fbc 40%, #0c3f79 100%);
+      border:2px solid rgba(10,30,55,.9);
+      outline:1px solid rgba(79,211,255,.55);
+      border-radius:4px;
+      min-height:520px;
+      position:relative;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+    }
+    .rank-header{
+      background:rgba(6,20,40,.9);
+      border:1px solid rgba(79,211,255,.7);
+      color:#c9f3ff; text-align:center; font-weight:700;
+      padding:8px 6px; margin:8px;
+      border-radius:2px; letter-spacing:.8px;
+      box-shadow:0 0 10px rgba(79,211,255,.25);
+    }
+    .btn-showall{
+      display:block; margin:0 auto 8px;
+      font-size:11px; padding:2px 10px;
+      border-radius:2px;
+      background:#1a3f6d; color:#cfe6ff;
+      border:1px solid rgba(79,211,255,.5);
+    }
+    .rank-list{
+      padding:8px 10px 64px;
+      display:flex; flex-direction:column; gap:12px;
+    }
+
+    .rank-item{
+      background:linear-gradient(90deg, rgba(5,20,40,.9), rgba(8,30,60,.9));
+      border:1px solid rgba(79,211,255,.18);
+      border-radius:2px;
+      padding:10px;
+      display:flex; align-items:center; justify-content:space-between;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.4);
+    }
+    .rank-item .left{
+      display:flex; align-items:center; gap:10px;
+      min-width:0;
+    }
+    .rank-badge{
+      min-width:42px; height:30px;
+      display:flex; align-items:center; justify-content:center;
+      color:#ffd66b; font-weight:800; font-size:12px; letter-spacing:.5px;
+    }
+    .rank-name{
+      font-size:12px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .rank-item .arrow{
+      color:var(--neon);
+      opacity:.9;
+      font-size:16px;
+      padding-left:8px;
+    }
+
+    .rank-footer{
+      position:absolute; left:8px; right:8px; bottom:8px;
+      background:rgba(6,20,40,.9);
+      border:1px solid rgba(79,211,255,.6);
+      text-align:center; font-size:12px; padding:8px 6px;
+      border-radius:2px; color:#bfefff;
+    }
+
+    /* responsive */
+    @media (max-width: 1200px){
+      .sidebar{ width:220px; }
+      .rank-col{ min-height:460px; }
+    }
+    @media (max-width: 992px){
+      .rank-col{ min-height:unset; }
+    }
+    @media (max-width: 768px){
+      .app{ flex-direction:column; }
+      .sidebar{ width:100%; height:auto; }
+      .sidebar-inner{ height:auto; position:static; }
+      .logout{ position:static; margin-top:12px; }
+    }
+  </style>
+  </head>
+
+  <body>
+    <div class="app">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="sidebar-inner">
+          <div class="brand">
+            <img src="logoikencana.png" width="200px">
+          </div>
+
+          <a class="side-link mt-2" href="#"><i
+              class="bi bi-house-door"></i><span>Home</span></a>
+
+          <div class="nav-section-title">Umum</div>
+          <a class="side-link active" href="#"><i
+              class="bi bi-person-badge"></i><span>Klasifikasi
+              Personnel</span></a>
+          <a class="side-link" href="#"><i
+              class="bi bi-briefcase"></i><span>Klasifikasi
+              Jabatan</span></a>
+
+          <div class="nav-section-title">Spesifik</div>
+          <a class="side-link" href="#"><i
+              class="bi bi-mortarboard"></i><span>Klasifikasi
+              Pendidikan</span></a>
+          <a class="side-link" href="#"><i
+              class="bi bi-stars"></i><span>Klasifikasi
+              Khusus</span></a>
+
+          <div class="nav-section-title">Analisis Alokasi</div>
+          <div class="px-3">
+            <div class="analysis-tabs btn-group w-100 mb-2"
+              role="group">
+              <button class="btn active w-50">Jabatan</button>
+              <button class="btn w-50">Personel</button>
+            </div>
+            <button class="btn btn-sm w-100 text-uppercase"
+              style="background:#1a3f6d;border:1px solid rgba(255,255,255,.08);">
+              Match Checking
+            </button>
+          </div>
+
+          <div class="logout">
+            <a class="side-link" href="#"><i
+                class="bi bi-box-arrow-left"></i><span>Log
+                Out</span></a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="content">
+        <!-- TOPBAR -->
+        <div class="topbar">
+          <div class="crumb">
+            <span class="opacity-75">Klasifikasi Personel</span>
+            <i class="bi bi-chevron-right small"></i>
+            <span class="tag">Pangkat</span>
+          </div>
+
+          <div style="min-width:220px">
+            <select class="form-select form-select-sm">
+              <option selected>Kategori</option>
+              <option>Angkatan Darat</option>
+              <option>Angkatan Laut</option>
+              <option>Angkatan Udara</option>
+            </select>
+          </div>
+
+          <div class="search-wrap">
+            <input class="form-control form-control-sm"
+              placeholder="Cari" />
+            <i class="bi bi-search"></i>
+          </div>
+
+          <div class="notif"><i class="bi bi-bell"></i></div>
+        </div>
+
+        <!-- RANK COLUMNS -->
+        <div class="rank-grid">
+          <div class="row g-3 row-cols-1 row-cols-md-2 row-cols-xl-5">
+            <!-- PATI -->
+            <div class="col">
+              <div class="rank-col">
+                <div class="rank-header">PATI</div>
+                <button class="btn-showall">Show All</button>
+
+                <div class="rank-list">
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">★★★</div>
+                      <div class="rank-name">LAKSDA
+                        YA</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">★★</div>
+                      <div class="rank-name">LAKSDA</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">★</div>
+                      <div class="rank-name">LAKSMA</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+                </div>
+
+                <div class="rank-footer">Analytic Data</div>
+              </div>
+            </div>
+
+            <!-- PAMEN -->
+            <div class="col">
+              <div class="rank-col">
+                <div class="rank-header"><a
+                    href="datklasifikasipamen.html">PAMEN</a></div>
+                <button class="btn-showall">Show All</button>
+
+                <div class="rank-list">
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">★★★</div>
+                      <div class="rank-name">KOLONEL</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">★★</div>
+                      <div class="rank-name">LETKOL</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">★</div>
+                      <div class="rank-name">MAYOR</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+                </div>
+
+                <div class="rank-footer">Analytic Data</div>
+              </div>
+            </div>
+
+            <!-- PAMA -->
+            <div class="col">
+              <div class="rank-col">
+                <div class="rank-header">PAMA</div>
+                <button class="btn-showall">Show All</button>
+
+                <div class="rank-list">
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">▮▮▮</div>
+                      <div class="rank-name">KAPTEN</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">▮▮</div>
+                      <div class="rank-name">LETTU</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">▮</div>
+                      <div class="rank-name">LETDA</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+                </div>
+
+                <div class="rank-footer">Analytic Data</div>
+              </div>
+            </div>
+
+            <!-- BINTARA -->
+            <div class="col">
+              <div class="rank-col">
+                <div class="rank-header">BINTARA</div>
+                <button class="btn-showall">Show All</button>
+
+                <div class="rank-list">
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">≋≋</div>
+                      <div class="rank-name">PELTU</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">≋</div>
+                      <div class="rank-name">PELDA</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">⟰⟰⟰</div>
+                      <div class="rank-name">SERMA</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">⟰⟰</div>
+                      <div class="rank-name">SERKA</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">⟰</div>
+                      <div class="rank-name">SERTU</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">˅</div>
+                      <div class="rank-name">SERDA</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+                </div>
+
+                <div class="rank-footer">Analytic Data</div>
+              </div>
+            </div>
+
+            <!-- TAMTAMA -->
+            <div class="col">
+              <div class="rank-col">
+                <div class="rank-header">TAMTAMA</div>
+                <button class="btn-showall">Show All</button>
+
+                <div class="rank-list">
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">≡≡</div>
+                      <div class="rank-name">KOPKA</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">≡</div>
+                      <div class="rank-name">KOPTU</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">—</div>
+                      <div class="rank-name">KOPDA</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">▭</div>
+                      <div class="rank-name">KLK</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">▭</div>
+                      <div class="rank-name">KLS</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+
+                  <div class="rank-item">
+                    <div class="left">
+                      <div class="rank-badge">▁</div>
+                      <div class="rank-name">KLD</div>
+                    </div>
+                    <div class="arrow"><i
+                        class="bi bi-chevron-right"></i></div>
+                  </div>
+                </div>
+
+                <div class="rank-footer">Analytic Data</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

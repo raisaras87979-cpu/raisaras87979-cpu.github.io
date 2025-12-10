@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>KENCANA – Angkatan</title>
+
+    <!-- Bootstrap 5 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet">
+
+    <style>
+    :root{
+      --nav-w:255px;
+      --bg-deep:#08112b;
+      --bg-mid:#0c2350;
+      --panel:#0a1230;
+      --panel-2:#0e1b46;
+      --cyan:#39c8e8;
+      --line:rgba(255,255,255,.18);
+      --text-dim:rgba(255,255,255,.75);
+      --btn:#1d5f9a;
+      --btn-dark:#184b7a;
+      --btn-hi:#5aa6e9;
+      --radius-xl:18px;
+    }
+
+    body{
+      background:
+        radial-gradient(1200px 700px at 70% -10%, #1b4aa0 0%, transparent 60%),
+        radial-gradient(1000px 800px at -10% 20%, #1a5a7a 0%, transparent 55%),
+        linear-gradient(180deg, #0a1130 0%, #0d1f4a 50%, #0b1540 100%);
+      min-height:100vh;
+      color:#e8f2ff;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    }
+
+    /* ===== Layout ===== */
+    .app{
+      display:grid;
+      grid-template-columns: var(--nav-w) 1fr;
+      grid-template-rows:auto 1fr;
+      grid-template-areas:
+        "sidebar topbar"
+        "sidebar main";
+      min-height:100vh;
+    }
+
+    /* ===== Sidebar ===== */
+    .sidebar{
+      grid-area:sidebar;
+      position:sticky;top:0;height:100vh;
+      padding:18px 14px;
+      background:linear-gradient(180deg, rgba(10,20,47,.98) 0%, rgba(9,21,50,.98) 55%, rgba(8,16,40,1) 100%);
+      border-right:1px solid var(--line);
+      overflow:auto;z-index:20;
+    }
+    .brand{
+      display:flex;align-items:center;gap:12px;
+      padding:8px 8px 16px;border-bottom:1px solid var(--line);margin-bottom:14px;
+    }
+    .brand-mark{
+      width:42px;height:42px;border-radius:10px;
+      background:conic-gradient(from 220deg, var(--cyan), #6a7dff, #2ad1cf, var(--cyan));
+      box-shadow:0 10px 20px rgba(30,200,230,.35);
+    }
+    .brand h1{
+      font-size:16px;letter-spacing:.8px;margin:0;font-weight:800;color:#76e3ff;
+    }
+    .nav-group-title{
+      font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);
+      padding:10px 10px 6px;
+    }
+    .side-link{
+      display:flex;align-items:center;justify-content:space-between;
+      color:#e9f3ff;text-decoration:none;font-weight:600;font-size:14px;
+      padding:10px 12px;border-radius:10px;margin:4px 0;
+      border:1px solid transparent;background:transparent;transition:.15s ease;
+    }
+    .side-link .left{display:flex;align-items:center;gap:10px;}
+    .side-link:hover{
+      background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.08);
+      transform:translateX(2px);
+    }
+    .side-link.active{
+      background:rgba(90,130,255,.18);
+      border-color:rgba(90,130,255,.55);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.03);
+    }
+    .side-sep{height:1px;background:var(--line);margin:8px 4px;}
+
+    .analysis-tabs{display:flex;gap:6px;padding:0 6px 8px;}
+    .analysis-tabs .tab{
+      flex:1;text-align:center;font-size:12px;font-weight:800;
+      padding:8px 6px;border-radius:8px;border:1px solid var(--line);
+      background:rgba(255,255,255,.04);color:#fff;
+    }
+    .analysis-tabs .tab.active{
+      background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);
+    }
+    .match-btn{
+      width:100%;margin-top:6px;background:rgba(79,140,255,.15);
+      border:1px solid rgba(79,140,255,.5);
+      color:#e8f2ff;font-weight:800;border-radius:8px;padding:8px 10px;
+    }
+
+    /* ===== Topbar ===== */
+    .topbar{
+      grid-area:topbar;
+      position:sticky;top:0;z-index:10;
+      background:rgba(8,16,40,.7);backdrop-filter:blur(8px);
+      border-bottom:1px solid var(--line);
+      padding:10px 14px;display:flex;align-items:center;justify-content:flex-end;gap:10px;
+    }
+    .top-input{
+      height:36px;background:rgba(255,255,255,.06);
+      border:1px solid var(--line);color:#fff;font-weight:600;
+    }
+    .top-input::placeholder{color:rgba(255,255,255,.75);}
+    .notif{
+      width:38px;height:36px;display:grid;place-items:center;
+      border:1px solid var(--line);background:rgba(255,255,255,.06);
+      border-radius:6px;position:relative;
+    }
+    .notif .badge{position:absolute;top:-6px;right:-6px;}
+
+    /* ===== Main ===== */
+    main{grid-area:main;padding:18px;}
+    .stage{
+      background:linear-gradient(180deg, rgba(7,12,30,.92) 0%, rgba(16,44,92,.95) 60%, rgba(10,66,106,.98) 100%);
+      border:1px solid var(--line);
+      border-radius:var(--radius-xl);
+      box-shadow:0 12px 28px rgba(0,0,0,.35);
+      overflow:hidden;
+      padding:14px 14px 18px;
+    }
+
+    /* Breadcrumb pills */
+    .crumb-row{
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+      margin-bottom:10px;
+    }
+    .crumb-pill{
+      background:rgba(255,255,255,.08);
+      border:1px solid var(--line);
+      color:#fff;font-weight:800;font-size:12px;
+      padding:6px 10px;border-radius:999px;letter-spacing:.4px;
+    }
+    .crumb-pill.active{
+      background:rgba(90,130,255,.25);
+      border-color:rgba(90,130,255,.6);
+    }
+
+    /* Top tabs (AAL, PK, ...) */
+    .top-tabs{
+      display:flex;gap:10px;overflow:auto;padding-bottom:6px;margin-bottom:10px;
+    }
+    .top-tab{
+      min-width:110px;
+      text-align:center;
+      font-weight:900;font-size:12px;letter-spacing:.6px;
+      padding:8px 10px;border-radius:0;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      color:#fff;
+      position:relative;
+    }
+    .top-tab.active{
+      background:rgba(8,16,40,.9);
+      border-color:rgba(57,200,232,.9);
+      box-shadow: inset 0 3px 0 var(--cyan);
+    }
+
+    /* Columns panel */
+    .columns-wrap{
+      background:rgba(6,10,25,.7);
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:14px;
+      min-height:520px;
+    }
+
+    .col-box{
+      border:2px solid rgba(57,200,232,.9);
+      border-radius:0;
+      padding:10px;
+      background:rgba(8,16,40,.5);
+      height:100%;
+      display:flex;flex-direction:column;gap:10px;
+    }
+    .col-title{
+      font-size:11px;font-weight:900;letter-spacing:.6px;
+      color:var(--cyan);
+      margin-bottom:6px;
+    }
+
+    .angkatan-btn{
+      width:100%;
+      background:linear-gradient(180deg, var(--btn), var(--btn-dark));
+      border:1px solid rgba(255,255,255,.10);
+      color:#fff;
+      font-weight:800;font-size:12px;
+      padding:10px 8px;
+      border-radius:0;
+      text-transform:uppercase;
+      letter-spacing:.4px;
+    }
+    .angkatan-btn.blank{
+      background:rgba(255,255,255,.04);
+      color:transparent;border-color:transparent;
+      padding:14px 8px;
+      cursor:default;
+    }
+    .angkatan-btn.highlight{
+      background:linear-gradient(180deg, var(--btn-hi), #3a79bf);
+      border-color:rgba(255,255,255,.25);
+      box-shadow:0 6px 16px rgba(70,150,220,.45);
+    }
+
+    /* Mobile sidebar */
+    .menu-btn{
+      display:none;position:fixed;top:12px;left:12px;z-index:50;
+      width:40px;height:40px;border-radius:10px;
+      background:rgba(8,16,40,.9);
+      border:1px solid var(--line);
+      color:#fff;font-size:20px;font-weight:700;
+    }
+    @media (max-width:992px){
+      :root{--nav-w:230px;}
+    }
+    @media (max-width:768px){
+      .app{grid-template-columns:1fr;grid-template-areas:"topbar" "main";}
+      .sidebar{
+        position:fixed;inset:0 auto 0 0;width:var(--nav-w);
+        transform:translateX(-105%);transition:.2s ease;z-index:40;
+      }
+      .sidebar.open{transform:translateX(0);}
+      .menu-btn{display:grid;place-items:center;}
+      .topbar{justify-content:center;padding-left:60px;}
+    }
+  </style>
+  </head>
+  <body>
+
+    <button class="menu-btn" id="menuBtn">☰</button>
+
+    <div class="app">
+
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <div class="brand">
+          <div class="brand-mark"></div>
+          <div>
+            <img src="logoikencana.png" width="200px">
+          </div>
+        </div>
+
+        <a class="side-link" href="#">
+          <div class="left"><i class="bi bi-house"></i> Home</div>
+        </a>
+
+        <div class="side-sep"></div>
+
+        <div class="nav-group-title">Umum</div>
+        <a class="side-link active" href="#">
+          <div class="left"><i class="bi bi-people"></i> Klasifikasi
+            Personnel</div>
+          <i class="bi bi-chevron-right small opacity-75"></i>
+        </a>
+        <a class="side-link" href="#">
+          <div class="left"><i class="bi bi-person-badge"></i> Klasifikasi
+            Jabatan</div>
+          <i class="bi bi-chevron-right small opacity-75"></i>
+        </a>
+
+        <div class="side-sep"></div>
+
+        <div class="nav-group-title">Spesifik</div>
+        <a class="side-link" href="#">
+          <div class="left"><i class="bi bi-mortarboard"></i> Klasifikasi
+            Pendidikan</div>
+          <i class="bi bi-chevron-right small opacity-75"></i>
+        </a>
+        <a class="side-link" href="#">
+          <div class="left"><i class="bi bi-stars"></i> Klasifikasi Khusus</div>
+          <i class="bi bi-chevron-right small opacity-75"></i>
+        </a>
+
+        <div class="side-sep"></div>
+
+        <div class="nav-group-title">Analysis Alokasi</div>
+        <div class="analysis-tabs">
+          <div class="tab">Jabatan</div>
+          <div class="tab active">Personnel</div>
+        </div>
+        <button class="match-btn">Match Checking</button>
+
+        <div class="mt-auto pt-5">
+          <a class="side-link" href="#">
+            <div class="left"><i class="bi bi-box-arrow-right"></i> Log
+              Out</div>
+          </a>
+        </div>
+      </aside>
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="input-group" style="max-width:260px;">
+          <span
+            class="input-group-text bg-transparent border-0 text-white-50 fw-bold">Kategori</span>
+          <select class="form-select top-input">
+            <option selected>All</option>
+            <option>AAL</option><option>PK</option><option>CAPA</option><option>BA</option><option>TA</option>
+          </select>
+        </div>
+
+        <div class="input-group" style="max-width:320px;">
+          <span
+            class="input-group-text bg-transparent border-0 text-white-50 fw-bold">Cari</span>
+          <input class="form-control top-input" placeholder="Search..." />
+          <span class="input-group-text bg-transparent border-0 text-white-50">
+            <i class="bi bi-search"></i>
+          </span>
+        </div>
+
+        <div class="notif">
+          <i class="bi bi-bell"></i>
+          <span class="badge rounded-pill text-bg-danger">3</span>
+        </div>
+      </header>
+
+      <!-- MAIN -->
+      <main>
+        <section class="stage">
+
+          <!-- breadcrumb pills -->
+          <div class="crumb-row">
+            <div class="crumb-pill">Klasifikasi Personnel</div>
+            <div class="crumb-pill active">Angkatan</div>
+          </div>
+
+          <!-- top tabs -->
+          <div class="top-tabs">
+            <div class="top-tab active">AAL</div>
+            <div class="top-tab">PK</div>
+            <div class="top-tab">CAPA</div>
+            <div class="top-tab">BA</div>
+            <div class="top-tab">TA</div>
+          </div>
+
+          <!-- columns area -->
+          <div class="columns-wrap">
+            <div class="row g-4">
+
+              <!-- Column 1 -->
+              <div class="col-12 col-md-6 col-xl-3">
+                <div class="col-box">
+                  <div class="col-title">AAL 35–39</div>
+
+                  <!-- blanks on top like the slide -->
+                  <button class="angkatan-btn blank">.</button>
+                  <button class="angkatan-btn blank">.</button>
+                  <button class="angkatan-btn blank">.</button>
+                  <button class="angkatan-btn blank">.</button>
+                  <button class="angkatan-btn blank">.</button>
+
+                  <button class="angkatan-btn">AAL 35</button>
+                  <button class="angkatan-btn">AAL 36</button>
+                  <button class="angkatan-btn">AAL 37</button>
+                  <button class="angkatan-btn">AAL 38</button>
+                  <button class="angkatan-btn">AAL 39</button>
+                </div>
+              </div>
+
+              <!-- Column 2 -->
+              <div class="col-12 col-md-6 col-xl-3">
+                <div class="col-box">
+                  <div class="col-title">AAL 40–49</div>
+                  <button class="angkatan-btn">AAL 40</button>
+                  <button class="angkatan-btn">AAL 41</button>
+                  <button class="angkatan-btn">AAL 42</button>
+                  <button class="angkatan-btn">AAL 43</button>
+                  <button class="angkatan-btn">AAL 44</button>
+                  <button class="angkatan-btn">AAL 45</button>
+                  <a href="detailpersonil.html"><button
+                      class="angkatan-btn highlight">AAL 46</button></a>
+                  <button class="angkatan-btn">AAL 47</button>
+                  <button class="angkatan-btn">AAL 48</button>
+                  <button class="angkatan-btn">AAL 49</button>
+                </div>
+              </div>
+
+              <!-- Column 3 -->
+              <div class="col-12 col-md-6 col-xl-3">
+                <div class="col-box">
+                  <div class="col-title">AAL 50–59</div>
+                  <button class="angkatan-btn">AAL 50</button>
+                  <button class="angkatan-btn">AAL 51</button>
+                  <button class="angkatan-btn">AAL 52</button>
+                  <button class="angkatan-btn">AAL 53</button>
+                  <button class="angkatan-btn">AAL 54</button>
+                  <button class="angkatan-btn">AAL 55</button>
+                  <button class="angkatan-btn">AAL 56</button>
+                  <button class="angkatan-btn">AAL 57</button>
+                  <button class="angkatan-btn">AAL 58</button>
+                  <button class="angkatan-btn">AAL 59</button>
+                </div>
+              </div>
+
+              <!-- Column 4 -->
+              <div class="col-12 col-md-6 col-xl-3">
+                <div class="col-box">
+                  <div class="col-title">AAL 60–68</div>
+                  <button class="angkatan-btn">AAL 60</button>
+                  <button class="angkatan-btn">AAL 61</button>
+                  <button class="angkatan-btn">AAL 62</button>
+                  <button class="angkatan-btn">AAL 63</button>
+                  <button class="angkatan-btn">AAL 64</button>
+                  <button class="angkatan-btn">AAL 65</button>
+                  <button class="angkatan-btn">AAL 66</button>
+                  <button class="angkatan-btn">AAL 67</button>
+                  <button class="angkatan-btn">AAL 68</button>
+
+                  <!-- subtle empty footer space like slide -->
+                  <button class="angkatan-btn blank">.</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </section>
+      </main>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+  // Mobile sidebar toggle
+  const sidebar = document.getElementById('sidebar');
+  const menuBtn = document.getElementById('menuBtn');
+  menuBtn?.addEventListener('click', ()=> sidebar.classList.toggle('open'));
+
+  // Close sidebar when clicking outside on mobile
+  document.addEventListener('click', (e)=>{
+    if (!window.matchMedia("(max-width: 768px)").matches) return;
+    if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== menuBtn){
+      sidebar.classList.remove('open');
+    }
+  });
+</script>
+  </body>
+</html>

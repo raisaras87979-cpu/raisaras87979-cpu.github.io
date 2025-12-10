@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>KENCANA - User Management</title>
+
+        <!-- Bootstrap 5 -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+        <!-- Bootstrap Icons -->
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+        <style>
+    :root{
+      --bg-1:#0b1d3a;
+      --bg-2:#143a70;
+      --bg-3:#1f5fa6;
+      --card-top:#0b79c9;
+      --card-mid:#0a5ea7;
+      --card-bot:#073b68;
+      --teal:#79e0e6;
+    }
+
+    body{
+      min-height:100vh;
+      color:#e9f5ff;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 700px at 70% 10%, #1a4f8f33, transparent 60%),
+        radial-gradient(900px 600px at 20% 30%, #2a7ad633, transparent 60%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 45%, var(--bg-3) 100%);
+      position:relative;
+      overflow-x:hidden;
+    }
+
+    /* subtle circuit overlay */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.18;
+      background:
+        repeating-linear-gradient(0deg, transparent 0 22px, #bfe7ff10 22px 23px),
+        repeating-linear-gradient(90deg, transparent 0 40px, #bfe7ff10 40px 41px);
+      mix-blend-mode:screen;
+    }
+
+    .page-wrap{
+      min-height:100vh;
+      padding:22px 26px 40px;
+      border-radius:18px;
+      box-shadow: inset 0 0 0 2px #0a2b55;
+      background: linear-gradient(180deg, #061a33aa, transparent 35%);
+    }
+
+    /* top logo */
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:.7rem;
+      font-weight:800;
+      letter-spacing:1px;
+      color:#9fe9ef;
+      text-transform:uppercase;
+      font-size:1.25rem;
+    }
+    .brand-mark{
+      width:50px;height:32px;
+      display:grid;place-items:center;
+      color:#9fe9ef;
+      filter: drop-shadow(0 0 6px #6ee7ff66);
+    }
+
+    .title-bar{
+      margin-top:14px;
+      display:inline-block;
+      background:#0a6ab5;
+      padding:18px 44px;
+      min-width:360px;
+      font-weight:800;
+      letter-spacing:.6px;
+      color:white;
+      font-size:1.6rem;
+      box-shadow: 0 8px 0 #083d74;
+    }
+
+    .main-row{
+      margin-top:46px;
+      position:relative;
+      align-items:center;
+      justify-content:center;
+      gap:24px;
+    }
+
+    /* big arrow between cards */
+    .flow-arrow{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%, -50%);
+      width:260px;
+      height:180px;
+      opacity:.45;
+      filter: blur(.2px);
+    }
+
+    /* cards */
+    .k-card{
+      width:100%;
+      max-width:460px;
+      border-radius:26px;
+      padding:34px 44px 36px;
+      background: linear-gradient(180deg, var(--card-top) 0%, var(--card-mid) 55%, var(--card-bot) 100%);
+      box-shadow:
+        0 30px 55px #00000055,
+        inset 0 0 0 1px #84d8ff22;
+      position:relative;
+    }
+    .k-card::after{
+      content:"";
+      position:absolute; inset:0;
+      border-radius:26px;
+      background: radial-gradient(600px 250px at 40% -10%, #8ef4ff40, transparent 55%);
+      pointer-events:none;
+    }
+
+    .k-logo-row{
+      display:flex; align-items:center; gap:14px;
+      margin-bottom:12px;
+    }
+    .k-logo{
+      width:78px; height:52px;
+      display:grid; place-items:center;
+      color:#aef3f6;
+      filter: drop-shadow(0 0 10px #7ee7ff88);
+      font-size:2rem;
+    }
+    .k-name{
+      font-size:1.9rem;
+      font-weight:900;
+      letter-spacing:1px;
+      color:#aef3f6;
+      text-transform:uppercase;
+      text-shadow:0 2px 0 #05345c;
+    }
+
+    .subtitle{
+      color:#bfe9ef;
+      font-size:.95rem;
+      font-weight:600;
+      letter-spacing:.4px;
+      margin-bottom:28px;
+    }
+
+    label{
+      font-size:.9rem;
+      color:#e8f5ff;
+      margin-bottom:.45rem;
+    }
+    .form-control{
+      border-radius:2px;
+      height:40px;
+      font-size:.95rem;
+    }
+    .form-control::placeholder{
+      font-style:italic;
+    }
+
+    .forgot{
+      font-size:.85rem;
+      color:#bfe9ff;
+      opacity:.85;
+      margin:8px 0 18px;
+      text-align:center;
+      font-style:italic;
+    }
+
+    .btn-soft{
+      background:#d9f0ff;
+      color:#0b2b4b;
+      border:none;
+      padding:.55rem 1.6rem;
+      border-radius:6px;
+      font-weight:700;
+      box-shadow: inset 0 -3px 0 #abd7f5;
+    }
+    .btn-soft:hover{ filter:brightness(0.98); }
+
+    /* right card content */
+    .two-step-icon{
+      font-size:2.5rem;
+      color:#ffd85e;
+      text-shadow:0 3px 0 #6a4a00;
+      margin:6px 0 8px;
+    }
+
+    .two-step-title{
+      font-weight:800;
+      color:#ffd85e;
+      margin-bottom:10px;
+      text-align:center;
+    }
+
+    .two-step-text{
+      text-align:center;
+      font-size:.98rem;
+      color:#e9f6ff;
+      margin-bottom:6px;
+    }
+    .two-step-sub{
+      text-align:center;
+      font-size:.9rem;
+      color:#d4ecff;
+      opacity:.95;
+    }
+
+    .code-boxes{
+      display:flex; gap:6px; justify-content:center;
+      margin-top:18px;
+    }
+    .code-box{
+      width:44px; height:56px;
+      display:grid; place-items:center;
+      background:#0a5ea7;
+      border:1px solid #7cc7ff44;
+      color:white;
+      font-weight:800;
+      font-size:1.25rem;
+      box-shadow: inset 0 -6px 0 #053e70;
+    }
+    .code-box.active{
+      background:#ffffff;
+      color:#0a2a4e;
+      box-shadow: inset 0 -6px 0 #ccd7e2;
+    }
+
+    @media (max-width: 991px){
+      .flow-arrow{ display:none; }
+      .title-bar{ min-width:auto; width:100%; text-align:center; }
+      .k-card{ max-width:560px; }
+    }
+  </style>
+    </head>
+
+    <body>
+        <div class="container-fluid page-wrap">
+            <!-- Header -->
+            <div class="d-flex align-items-center">
+                <div class="brand">
+                    <div class="brand-mark">
+                        <i class="bi bi-diagram-3-fill fs-2"></i>
+                    </div>
+                    <div>KENCANA</div>
+                </div>
+            </div>
+
+            <div class="title-bar">USER MANAGEMENT</div>
+
+            <!-- Main Content -->
+            <div class="row main-row g-4 mt-3">
+
+                <!-- Right Card: Two-step -->
+                <div class="col-12 col-lg-5 d-flex justify-content-center">
+                    <div class="k-card text-center">
+                        <div class="k-logo-row justify-content-center">
+                            <div class="k-logo"><img src="logoikencana.png"
+                                    width="200px"></div>
+                        </div>
+
+                        <div class="subtitle text-center">
+                            Knowledge-Effectiveness Nomination and<br>
+                            Comprehensive Allocation Network AI-based
+                        </div>
+
+                        <div class="two-step-icon">
+                            <i class="bi bi-phone-fill"></i>
+                            <i class="bi bi-chat-square-text-fill ms-1"></i>
+                        </div>
+
+                        <div class="two-step-title">This is a two Steps
+                            Verification</div>
+                        <div class="two-step-text fw-semibold">Enter a
+                            verification&nbsp;&nbsp;code</div>
+                        <div class="two-step-sub">
+                            A text message with a verification<br>
+                            code was sent to email@mil.id
+                        </div>
+
+                        <div class="code-boxes">
+                            <div class="code-box">G</div>
+                            <div class="code-box">2</div>
+                            <div class="code-box">R</div>
+                            <div class="code-box active">3</div>
+                            <div class="code-box">3</div>
+                            <div class="code-box">8</div>
+                        </div>
+                        <div class="code-boxes">
+                            <a href="dashboard.html"><button type="button"
+                                    class="btn btn-soft">Confirm</button></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kencana – Match Checking (Jabatan)</title>
+
+    <!-- Bootstrap 5 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet">
+
+    <style>
+    :root{
+      --bg-0:#07162b;
+      --bg-1:#0b2240;
+      --bg-2:#0e2c52;
+      --panel:#0f3a6b;
+      --panel-2:#0d3562;
+      --line:#1d5a97;
+      --cyan:#41e3ff;
+      --cyan-2:#16b4ff;
+      --text:#e8f4ff;
+      --muted:#a9c3dd;
+      --accent:#00d2ff;
+      --card:#082a4f;
+    }
+    body{
+      background: radial-gradient(1200px 600px at 70% -10%, #143a6e 0%, var(--bg-0) 52%, #061225 100%);
+      color: var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    /* App shell */
+    .app{
+      min-height: 100vh;
+      display:grid;
+      grid-template-columns: 260px 1fr;
+    }
+
+    /* Sidebar */
+    .sidebar{
+      background: linear-gradient(180deg, #0a1a34 0%, #08162e 60%, #071128 100%);
+      border-right: 2px solid #0f2a4f;
+      padding: 18px 14px;
+      position: sticky; top:0; height:100vh; overflow:auto;
+      display:flex; flex-direction:column;
+    }
+    .logo{
+      display:flex; align-items:center; gap:12px;
+      padding: 8px 8px 18px;
+      border-bottom: 1px solid #0e294d;
+      margin-bottom: 14px;
+    }
+    .logo-mark{
+      width:42px; height:42px; border-radius:10px;
+      background:
+        radial-gradient(circle at 30% 30%, #88f7ff 0%, transparent 50%),
+        radial-gradient(circle at 70% 70%, #2db7ff 0%, transparent 55%),
+        linear-gradient(135deg, #0b3a7a, #091e3f);
+      box-shadow: 0 0 18px rgba(0,210,255,.35) inset;
+    }
+    .logo h1{ margin:0; font-weight:800; letter-spacing:.5px; font-size:20px; color:#6fe9ff; }
+
+    .side-section-title{
+      font-size:12px; letter-spacing:.12em; text-transform:uppercase;
+      color: var(--muted); margin: 14px 8px 6px;
+    }
+    .side-link{
+      display:flex; align-items:center; gap:10px;
+      padding: 10px 12px; border-radius:8px; color:var(--text);
+      text-decoration:none;
+    }
+    .side-link:hover{ background:#0f274a; }
+    .side-link.active{
+      background: linear-gradient(90deg, #0d2c54 0%, #103a6c 100%);
+      border:1px solid #1b5d9c;
+      box-shadow: 0 0 0 1px rgba(0,210,255,.08) inset;
+    }
+    .side-link .bi{ color:#bfe8ff; font-size:18px; }
+
+    .analysis-box{
+      background: #0a1f3e;
+      border:1px solid #123b6a;
+      border-radius:10px;
+      padding:10px;
+      margin: 10px 6px;
+    }
+    .analysis-tabs .btn{
+      background:#0e2a4e; border:1px solid #184a82; color:var(--text);
+    }
+    .analysis-tabs .btn.active{
+      background: linear-gradient(180deg, #103a6c, #0e2f56);
+      border-color:#42d8ff;
+      box-shadow: 0 0 14px rgba(66,216,255,.25);
+    }
+
+    .logout{ margin-top:auto; position:sticky; bottom:12px; }
+    .logout .btn{ width:100%; background:#0a1a35; color:#dbefff; border:1px solid #163d6f; }
+
+    /* Main */
+    .main{ padding:12px 14px 18px; }
+
+    /* Top bar */
+    .topbar{
+      background: linear-gradient(180deg, #0b2345, #0a1f3e);
+      border:1px solid #153e70;
+      border-radius:10px;
+      padding:10px 12px;
+      display:flex; align-items:center; gap:10px;
+    }
+    .searchbar{
+      margin-left:auto;
+      display:flex; gap:8px; align-items:center;
+    }
+    .searchbar .form-select, .searchbar .form-control{
+      background:#0b2140; border-color:#1a4f86; color:var(--text);
+      min-width: 160px;
+    }
+    .searchbar .input-group-text{
+      background:#0b2140; border-color:#1a4f86; color:var(--muted);
+    }
+    .notif{
+      position:relative;
+      width:38px; height:38px; border-radius:8px;
+      background:#0b2140; border:1px solid #1a4f86;
+      display:grid; place-items:center;
+      color:#fff;
+    }
+    .notif .badge{ position:absolute; top:-6px; right:-6px; }
+
+    /* Panels */
+    .panel{
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border:1px solid var(--line);
+      border-radius:10px;
+      padding:10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.25);
+    }
+    .panel-header{
+      background: linear-gradient(180deg, #1f5f9f, #0f3e79);
+      border:1px solid #2a74b7;
+      color:#fff;
+      font-weight:900;
+      letter-spacing:.06em;
+      font-size:13px;
+      padding:8px 10px;
+      border-radius:8px;
+      text-transform:uppercase;
+      text-align:center;
+      margin-bottom:10px;
+    }
+
+    /* Form controls (left inner column) */
+    .control-label{
+      font-size:12px; font-weight:800; color:#d8f2ff;
+      letter-spacing:.05em; text-transform:uppercase;
+      margin-bottom:4px;
+    }
+    .control-select{
+      background: linear-gradient(180deg, #1d86c7, #0d4b86);
+      border:1px solid #2a8ad0; color:#e9f7ff;
+      font-weight:700;
+    }
+
+    .metric{
+      background:#0b2140; border:1px solid #1a4f86; border-radius:10px;
+      padding:10px 12px; display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:8px;
+    }
+    .metric .title{
+      font-size:11px; font-weight:900; letter-spacing:.06em; text-transform:uppercase; color:#d9f3ff;
+      line-height:1.2;
+    }
+    .metric .value{
+      background:#0f3060; border:1px solid #2365a6; border-radius:8px;
+      font-size:22px; font-weight:900; color:#62f0ff;
+      padding:6px 10px; min-width:70px; text-align:center;
+      box-shadow:0 0 12px rgba(98,240,255,.25) inset;
+    }
+
+    .big-count{
+      background: linear-gradient(180deg, #2aa8e7, #0c5a9a);
+      border:1px solid #48c9ff;
+      color:#03213d;
+      border-radius:10px;
+      padding:10px 12px;
+      display:flex; justify-content:space-between; align-items:center;
+      font-weight:900;
+      margin-top:4px;
+    }
+    .big-count .value{
+      color:#e9f7ff; background:#0b3e74; border:1px solid #69e9ff;
+      padding:6px 12px; border-radius:8px; font-size:22px; min-width:70px; text-align:center;
+    }
+
+    .mini-btn{
+      background:#0b2140; border:1px solid #1a4f86; color:#e9f7ff;
+      font-weight:800; font-size:12px; letter-spacing:.04em;
+      border-radius:6px; padding:7px 10px;
+      display:flex; align-items:center; justify-content:center; gap:6px;
+      width:100%;
+      margin-top:6px;
+    }
+    .mini-btn.secondary{
+      background:#0a1c39;
+    }
+
+    .impact-box{
+      background:#0b2140; border:1px solid #1a4f86; border-radius:8px;
+      padding:8px 10px; font-size:12px; font-weight:800; text-transform:uppercase;
+      display:flex; justify-content:space-between; align-items:center;
+      margin-top:8px;
+    }
+    .impact-box a{ color:#7befff; font-weight:700; text-transform:none; }
+
+    .apply-filter{
+      background: linear-gradient(180deg, #44e3ff, #1aa2ff);
+      border:1px solid #8df6ff; color:#04233f; font-weight:900;
+      width:100%; border-radius:6px; padding:7px 10px; margin-top:6px;
+    }
+    .cancel{
+      background:#0a1c39; border:1px solid #1a4f86; color:#e9f7ff; font-weight:800;
+      width:100%; border-radius:6px; padding:7px 10px; margin-top:6px;
+    }
+
+    /* Candidate board */
+    .board{
+      background: radial-gradient(900px 400px at 30% 0%, #171b22 0%, #0b0f16 40%, #06070b 100%);
+      border:1px solid #2b5f93;
+      border-radius:10px;
+      padding:18px 14px;
+      height: 460px;
+      overflow:auto;
+    }
+    .candidate{
+      width: 250px; max-width:100%;
+      margin: 10px auto;
+      display:flex; flex-direction:column; align-items:center; gap:10px;
+    }
+    .candidate .photo{
+      width:150px; height:190px; background:#0a2b50; border:2px solid #e8f4ff;
+      border-radius:6px; overflow:hidden;
+      box-shadow: 0 0 0 2px rgba(255,255,255,.08) inset;
+    }
+    .candidate .photo img{ width:100%; height:100%; object-fit:cover; }
+
+    .score-card{
+      width: 210px;
+      background: linear-gradient(180deg, #cad4df, #7f8c9a);
+      border-radius:12px;
+      padding:8px;
+      color:#0c1d33;
+      box-shadow: 0 6px 18px rgba(0,0,0,.45) inset, 0 10px 18px rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.8);
+    }
+    .score-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:8px;
+      background: #0b3c6b;
+      border-radius:8px;
+      padding:8px;
+      color:#e9f7ff;
+      border:1px solid #4fdcff;
+      font-weight:900;
+      text-align:center;
+    }
+    .score-grid .label{ font-size:12px; letter-spacing:.04em; color:#d9f3ff; }
+    .score-grid .num{
+      background:#0e2f57; border:1px solid #69e9ff; border-radius:4px;
+      padding:4px 0; font-size:20px; color:#62f0ff;
+      text-shadow:0 0 8px rgba(98,240,255,.35);
+      margin-top:2px;
+    }
+    .detail-btn{
+      margin-top:8px;
+      background: linear-gradient(180deg, #0d83c8, #0a4c8c);
+      border:1px solid #5feaff; color:#e9f7ff; font-weight:900; font-size:12px;
+      letter-spacing:.04em; border-radius:6px; width:100%; padding:6px 8px;
+    }
+
+    /* Filter footer */
+    .filter-panel{
+      margin-top:10px;
+      padding:10px;
+    }
+    .filter-header{
+      background: linear-gradient(180deg, #1f5f9f, #0f3e79);
+      border:1px solid #2a74b7;
+      color:#fff;
+      font-weight:900; letter-spacing:.06em; font-size:12px;
+      padding:6px 10px; border-radius:8px; text-transform:uppercase;
+      text-align:center; margin-bottom:8px;
+    }
+    .filter-strip{
+      background: radial-gradient(900px 180px at 30% 0%, #171b22 0%, #0b0f16 40%, #06070b 100%);
+      border:1px solid #2b5f93; border-radius:8px; padding:10px;
+    }
+    .filter-strip .form-check-label{ font-size:13px; color:#e9f7ff; }
+    .filter-strip .form-check-input{
+      background:#0b2140; border-color:#2b7ac3;
+    }
+    .filter-strip .form-select{
+      background:#0b2140; border-color:#2b7ac3; color:#e9f7ff; font-size:12px;
+    }
+
+    @media (min-width:992px){
+      .candidate-row{ display:flex; gap:34px; justify-content:center; }
+      .candidate{ margin:0; }
+    }
+  </style>
+  </head>
+  <body>
+
+    <div class="app">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="logo">
+          <img src="logoikencana.png" width="200px">
+        </div>
+
+        <a class="side-link" href="#"><i
+            class="bi bi-house-door-fill"></i>Home</a>
+
+        <div class="side-section-title">Umum</div>
+        <a class="side-link active" href="#"><i
+            class="bi bi-person-badge"></i>Klasifikasi Personnel</a>
+        <a class="side-link" href="#"><i class="bi bi-diagram-3"></i>Klasifikasi
+          Jabatan</a>
+
+        <div class="side-section-title mt-3">Spesifik</div>
+        <a class="side-link" href="#"><i
+            class="bi bi-mortarboard"></i>Klasifikasi Pendidikan</a>
+        <a class="side-link" href="#"><i class="bi bi-stars"></i>Klasifikasi
+          Khusus</a>
+
+        <div class="side-section-title mt-3">Analysis Alokasi</div>
+        <div class="analysis-box">
+          <div class="analysis-tabs btn-group w-100 mb-2" role="group">
+            <button class="btn btn-sm active">Jabatan</button>
+            <button class="btn btn-sm">Personnel</button>
+          </div>
+          <button class="btn btn-sm w-100">Match Checking</button>
+        </div>
+
+        <div class="logout mt-auto px-2">
+          <button class="btn btn-sm"><i
+              class="bi bi-box-arrow-right me-2"></i>Log Out</button>
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <main class="main">
+        <!-- TOPBAR -->
+        <div class="topbar">
+          <div class="crumbs d-flex gap-2 small text-info-emphasis">
+            <span class="px-2 py-1 rounded-2"
+              style="background:#0d2a51;border:1px solid #1a4f86;">Klasifikasi
+              Personnel</span>
+            <span class="px-2 py-1 rounded-2"
+              style="background:#0d2a51;border:1px solid #1a4f86;">Match
+              Checking</span>
+          </div>
+
+          <div class="searchbar">
+            <select class="form-select form-select-sm">
+              <option selected>Kategori</option>
+              <option>Perwira</option>
+              <option>Bintara</option>
+              <option>Tamtama</option>
+            </select>
+            <div class="input-group input-group-sm">
+              <span class="input-group-text"><i class="bi bi-search"></i></span>
+              <input class="form-control" placeholder="Cari">
+            </div>
+            <div class="notif">
+              <i class="bi bi-bell-fill"></i>
+              <span class="badge text-bg-danger rounded-pill">3</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-2 mt-2">
+          <!-- LEFT CONTROL COLUMN -->
+          <div class="col-12 col-lg-4 col-xl-3">
+            <section class="panel">
+              <div class="panel-header">Jabatan</div>
+
+              <div class="mb-2">
+                <div class="control-label">Seskoal</div>
+                <select class="form-select form-select-sm control-select">
+                  <option selected>Seskoal</option>
+                  <option>Koarmada</option>
+                  <option>Kormar</option>
+                </select>
+              </div>
+
+              <div class="mb-2">
+                <div class="control-label">Dep Jemen</div>
+                <select class="form-select form-select-sm control-select">
+                  <option selected>Dep Jemen</option>
+                  <option>Dep Ops</option>
+                  <option>Dep Pers</option>
+                </select>
+              </div>
+
+              <div class="mb-2">
+                <div class="control-label text-muted">Sub Satuan</div>
+                <select class="form-select form-select-sm control-select"
+                  disabled>
+                  <option selected>Sub Satuan</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <div class="control-label">Kadep Jemen</div>
+                <select class="form-select form-select-sm control-select">
+                  <option selected>Kadep Jemen</option>
+                  <option>Wakadep Jemen</option>
+                </select>
+              </div>
+
+              <div class="metric">
+                <div class="title">Hard Skill<br>Threshold</div>
+                <div class="value">600</div>
+              </div>
+              <div class="metric">
+                <div class="title">Soft Skill<br>Threshold</div>
+                <div class="value">70</div>
+              </div>
+
+              <div class="big-count">
+                <div class="title small text-uppercase">Candidates Match</div>
+                <div class="value">3</div>
+              </div>
+
+              <button class="mini-btn mt-2"><i
+                  class="bi bi-card-list"></i>Detail View</button>
+              <button class="mini-btn secondary"><i
+                  class="bi bi-graph-up"></i>Match Analysis</button>
+
+              <div class="impact-box mt-3">
+                <span>Expected Impact</span>
+                <a href="#">(all, none)</a>
+              </div>
+              <button class="apply-filter">APPLY FILTER</button>
+              <button class="cancel">CANCEL</button>
+            </section>
+          </div>
+
+          <!-- RIGHT CANDIDATE BOARD -->
+          <div class="col-12 col-lg-8 col-xl-9">
+            <section class="panel">
+              <div class="board">
+                <div class="candidate-row">
+                  <!-- Candidate 1 -->
+                  <div class="candidate">
+                    <div class="photo">
+                      <img
+                        src="https://via.placeholder.com/170x210.png?text=Photo"
+                        alt="candidate">
+                    </div>
+                    <div class="score-card">
+                      <div class="score-grid">
+                        <div>
+                          <div class="label">HS</div>
+                          <div class="num">645</div>
+                        </div>
+                        <div>
+                          <div class="label">SS</div>
+                          <div class="num">82</div>
+                        </div>
+                      </div>
+                      <button class="detail-btn"><i
+                          class="bi bi-search me-1"></i>Detail View</button>
+                    </div>
+                  </div>
+
+                  <!-- Candidate 2 -->
+                  <div class="candidate">
+                    <div class="photo">
+                      <img
+                        src="https://via.placeholder.com/170x210.png?text=Photo"
+                        alt="candidate">
+                    </div>
+                    <div class="score-card">
+                      <div class="score-grid">
+                        <div>
+                          <div class="label">HS</div>
+                          <div class="num">701</div>
+                        </div>
+                        <div>
+                          <div class="label">SS</div>
+                          <div class="num">87</div>
+                        </div>
+                      </div>
+                      <button class="detail-btn"><i
+                          class="bi bi-search me-1"></i>Detail View</button>
+                    </div>
+                  </div>
+
+                  <!-- Candidate 3 -->
+                  <div class="candidate">
+                    <div class="photo">
+                      <img
+                        src="https://via.placeholder.com/170x210.png?text=Photo"
+                        alt="candidate">
+                    </div>
+                    <div class="score-card">
+                      <div class="score-grid">
+                        <div>
+                          <div class="label">HS</div>
+                          <div class="num">686</div>
+                        </div>
+                        <div>
+                          <div class="label">SS</div>
+                          <div class="num">81</div>
+                        </div>
+                      </div>
+                      <button class="detail-btn"><i
+                          class="bi bi-search me-1"></i>Detail View</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- FILTER FOOTER -->
+            <section class="panel filter-panel">
+              <div class="filter-header">Filter</div>
+              <div class="filter-strip">
+                <div class="row gy-2 align-items-center">
+                  <div class="col-12 col-md-4">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="f6" />
+                      <label class="form-check-label" for="f6">Personel ≥ 6
+                        Bulan</label>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox"
+                        id="f1y" />
+                      <label class="form-check-label" for="f1y">Personel ≥ 1
+                        Tahun</label>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="f2y"
+                        checked />
+                      <label class="form-check-label" for="f2y">Personel ≥ 2
+                        Tahun</label>
+                    </div>
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <select class="form-select form-select-sm">
+                      <option selected>Domisili Keluarga</option>
+                      <option>Jawa</option>
+                      <option>Sumatera</option>
+                      <option>Kalimantan</option>
+                    </select>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <select class="form-select form-select-sm">
+                      <option selected>Domisili Lahir</option>
+                      <option>Surabaya</option>
+                      <option>Jakarta</option>
+                      <option>Makassar</option>
+                    </select>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <select class="form-select form-select-sm">
+                      <option selected>Range Angkatan</option>
+                      <option>AAL 44–46</option>
+                      <option>AAL 47–49</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
